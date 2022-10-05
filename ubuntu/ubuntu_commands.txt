@@ -1,0 +1,18 @@
+####################
+# ubuntu file      #
+# ubuntun folders  # 
+#################### 
+
+how to create ubuntu files ?
+
+> fileName        – Create an empty file.
+touch fileName    – Create an empty file.
+cat > filename    – To create a new text file under Ubuntu, 
+                   use the cat command followed by the redirection symbol ( > ) and
+                   the name of the file you want to create. Press Enter, 
+                   then type the text and once you are done, press the CRTL+D to save the file.
+
+
+https://www.cyberciti.biz/faq/ubuntu-create-file-using-cat-command/
+
+

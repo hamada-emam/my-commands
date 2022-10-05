@@ -1,0 +1,11 @@
+
+
+
+
+
+
+
+
+resourses
+
+https://www.hostinger.com/tutorials/how-to-install-laravel-on-ubuntu-18-04-with-apache-and-php/#3_Download_and_Install_a_Database_Manager

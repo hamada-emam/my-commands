@@ -1,0 +1,20 @@
+# create project 
+composer create-project laravel/laravel example-app
+
+# make create project easy with global 
+composer global require laravel/installer
+laravel new example-app
+
+# refer to project directory then serve it 
+cd example-app 
+php artisan serve
+
+#sqlite
+touch database/database.sqlite
+update .env file with the type of database => 
+DB_CONNECTION=sqlite 
+
+# to migrate the database use 
+php artisan migrate
+
+#
