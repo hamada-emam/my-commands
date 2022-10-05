@@ -1,0 +1,18 @@
+
+#resourses for docker docs 
+https://www.docker.com/
+
+#laravel sail the laravel solution to use docker 
+https://laravel.com/docs/9.x/sail
+
+#set up docker
+
+resourses
+https://docs.docker.com/desktop/install/ubuntu/
+
+commands
+1- sudo apt-get update
+
+2-sudo apt-get install ./docker-desktop-<version>-<arch>.deb
+
+3-

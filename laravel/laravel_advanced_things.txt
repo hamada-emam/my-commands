@@ -1,0 +1,18 @@
+
+#dependency injection
+https://laravel.com/docs/9.x/container
+
+#real-time events
+https://laravel.com/docs/9.x/broadcasting
+
+#queues
+https://laravel.com/docs/9.x/queues
+
+#unit testing 
+https://laravel.com/docs/9.x/testing
+
+#laravel with AWS's with no limits 
+https://vapor.laravel.com/
+
+#contrebuting to laravel 
+https://github.com/laravel/framework

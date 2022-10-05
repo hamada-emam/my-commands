@@ -1,0 +1,5 @@
+resourse install laravel 
+
+https://fahmidasclassroom.com/how-to-install-laravel-9-on-ubuntu/
+
+
