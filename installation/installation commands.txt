@@ -1,0 +1,1045 @@
+====chrome====
+---install--
+sudo apt update -y
+sudo apt install wget -y
+wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -O google.deb
+sudo dpkg -i google.deb
+google-chrome
+sudo apt update && sudo apt upgrade -y
+---remove--
+sudo apt autoremove --purge google-chrome-stable
+
+====apache===
+sudo apt update
+sudo apt install apache2
+sudo ufw app list
+sudo ufw allow 'Apache'
+sudo ufw status
+sudo systemctl status apache2
+hostname -I
+http://192.168.1.8/   => on web 
+sudo systemctl stop apache2
+sudo systemctl start apache2
+sudo systemctl restart apache2
+sudo systemctl reload apache2
+sudo systemctl disable apache2
+sudo systemctl enable apache2
+----setting up virtual hosts----
+sudo mkdir /var/www/your_domain
+sudo chown -R $USER:$USER /var/www/your_domain
+sudo chmod -R 755 /var/www/your_domain
+sudo nano /var/www/your_domain/index.html
+<html>
+    <head>
+        <title>Welcome to Your_domain!</title>
+    </head>
+    <body>
+        <h1>Success!  The your_domain virtual host is working!</h1>
+    </body>
+</html>
+sudo nano /etc/apache2/sites-available/your_domain.conf
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName your_domain
+    ServerAlias www.your_domain
+    DocumentRoot /var/www/your_domain
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+sudo a2ensite your_domain.conf
+sudo apache2ctl configtest
+sudo systemctl restart apache2
+---docs----
+https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04
+---apache modules---
+https://www.digitalocean.com/community/tutorials/how-to-install-configure-and-use-modules-in-the-apache-web-server
+----fpm--
+sudo a2enmod proxy_fcgi setenvif
+sudo systemctl restart apache2 
+sudo a2enconf php8.1-fpm
+sudo systemctl reload apache2
+
+sudo apt install apache2 php php-mbstring php-xml php-gd php-zip php-curl php-dev php-pear php-fpm composer unzip  
+=====curl====
+curl -4 icanhazip.com
+
+=====php====
+sudo apt update
+sudo apt install php8.1
+sudo apt install openssl php-bcmath php-curl php-json php-mbstring php-mysql php-tokenizer php-xml php-zip
+sudo apt install php-dev php-pear build-essential libaio1
+sudo apt install php-fpm 
+
+===oci8===
+sudo ufw allow out 1521/tcp
+sudo systemctl restart ufw
+sudo apt update && sudo apt upgrade
+sudo mkdir /opt/oracle
+cd /opt/oracle/
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-basic-linux.x64-21.6.0.0.0dbru.zip
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-sdk-linux.x64-21.6.0.0.0dbru.zip
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-sqlplus-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-basic-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-sdk-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-sqlplus-linux.x64-21.6.0.0.0dbru.zip
+sudo sh -c "echo /opt/oracle/instantclient_21_6 > /etc/ld.so.conf.d/oracle-instantclient.conf"
+sudo ldconfig
+
+export PATH=/opt/oracle/instantclient_21_6:$PATH
+ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_21_6"
+
+sudo ln -s /opt/oracle/instantclient_21_6/libclntsh.so.21.6 /opt/oracle/instantclient_21_6/libclntsh.so
+sudo ln -s /opt/oracle/instantclient_21_6/libclntshcore.so.21.6 /opt/oracle/instantclient_21_6/libclntshcore.so
+sudo ln -s /opt/oracle/instantclient_21_6/libocci.so.21.6 /opt/oracle/instantclient_21_6/libocci.so
+sudo rm -rf /opt/oracle/*.zip
+sudo apt update
+sudo apt install --no-install-recommends -y libaio-dev
+sudo apt-get install php-dev php-pear build-essential libaio1
+sudo pecl channel-update pecl.php.net
+sudo pecl install oci8
+path to instant client => instantclient,/opt/oracle/instantclient_21_6
+[
+Build process completed successfully
+Installing '/usr/lib/php/20190902/oci8.so'
+install ok: channel://pecl.php.net/oci8-2.2.0
+configuration option "php_ini" is not set to php.ini location
+You should add "extension=oci8.so" to php.ini
+]
+sudo nano /etc/php/8.1/cli/php.ini
+add this => extension=oci8.so
+sudo nano /etc/php/8.1/fpm/php.ini
+add this => extension=oci8.so
+sudo systemctl restart apache2
+cd /etc/php/8.1/mods-available/
+sudo nano oci.ini
+add this => extension=oci8.so
+cd /etc/php/8.1/apache2/conf.d
+sudo ln -s /etc/php/8.1/mods-available/oci.ini 20-oci.ini 
+sudo pecl install oci8
+sudo nano /etc/php/8.1/fpm/pool.d/www.conf
+uncomment this => clear_env = no
+[
+env[LD_LIBRARY_PATH] = /opt/oracle/instantclient_21_6
+env[OCI_HOME] = /opt/oracle/instantclient_21_6
+env[OCI_LIB_DIR] = /opt/oracle/instantclient_21_6
+env[OCI_INCLUDE_DIR] = /opt/oracle/instantclient_21_6/sdk/include
+env[OCI_VERSION] = 21
+]
+sudo systemctl restart apache2
+php -i | grep oci
+
+export PHP_DTRACE=yes
+
+====gnome====
+sudo apt update
+
+=====zsh====
+https://dev.to/leamsigc/set-zsh-as-the-default-shell-in-your-terminal-3o7f
+https://www.todo.how/install-oci8-on-ubuntu-22-04-with-php-8-1-fpm-fastcgi
+https://linuxhint.com/install-visual-studio-code-ubuntu22-04/
+
+===mysql===
+sudo apt update && sudo apt upgrade
+sudo apt install mysql-server
+sudo systemctl start mysql
+sudo systemctl status mysql
+https://freegistutorial.com/how-to-install-mysql-server-on-ubuntu-23-04-lunar-lobster/
+https://www.makeuseof.com/install-configure-mysql-ubuntu/
+https://snapshooter.com/blog/how-to-configure-mysql-for-remote-connection-on-ubuntu-1804
+
+------install------
+  sudo systemctl stop mysql
+  sudo apt clean
+  sudo apt purge mysql*
+  sudo rm -rf /etc/mysql /var/lib/mysql /var/log/mysql
+  sudo apt autoremove
+  sudo rm -rf /etc/mysql /var/lib/mysql /var/log/mysql
+  sudo apt autoclean
+  sudo apt update
+  sudo apt dist-upgrade
+  sudo apt install -f
+  sudo apt install mysql-server
+-------
+  mysql_secure_installation
+  
+  sudo dpkg -l | grep mysql
+  sudo systemctl disable mysql
+  sudo systemctl enable mysql
+
+  sudo apt-get remove --purge mysql*
+  sudo apt-get purge mysql*
+  sudo apt-get autoremove
+  sudo apt-get autoclean
+  sudo apt-get remove dbconfig-mysql
+  sudo apt-get dist-upgrade
+  rm -rf /var/lib/mysql/
+  rm -rf /etc/my.cnf
+  sudo apt install mysql-server
+  sudo service mysql status
+  sudo journalctl -u mysql
+  sudo service mysql restart
+  sudo ss -tap | grep mysql
+  sudo apt install mysql-client -y
+  sudo systemctl enable mysql
+
+ @@ to show table of @@ to solve password error ==> @@@ https://ostechnix.com/fix-mysql-error-1819-hy000-your-password-does-not-satisfy-the-current-policy-requirements/   @@@
++--------------------------------------+--------+
+| Variable_name                        | Value  |
++--------------------------------------+--------+
+| validate_password.check_user_name    | ON     |
+| validate_password.dictionary_file    |        |
+| validate_password.length             | 8      |
+| validate_password.mixed_case_count   | 1      |
+| validate_password.number_count       | 1      |
+| validate_password.policy             | MEDIUM |
+| validate_password.special_char_count | 1      |
++--------------------------------------+--------+
+7 rows in set (0.01 sec)
+
+
+use ->
+
+% SHOW VARIABLES LIKE 'validate_password%'
+
+#to create new user just use 
+
+% create user 'username'@'localhost' identified by 'Password123#@!';
+
+# to kill all mysql ->  % sudo killall -9 mysql_secure_installation
+
+
+ # create batabase 
+
+% CREATE DATABASE db_name;
+
+#to select database just write 
+@%  use database_name
+
+# to log in into mysql 
+@%  mysql --user=root --password=7amada@124H
+
+#to install dbeaver-ce 
+@@@ https://dbeaver.io/download/?start&os=linux&arch=x86_64&dist=deb   @@@
+
+mysql -u hamada -p -D mekkawy < ../admin_mekawy_2023-10-22_21-41-55.sql
+
+===debeaver===
+sudo apt update
+sudo apt -y install default-jdk
+java -version
+curl -fsSL https://dbeaver.io/debs/dbeaver.gpg.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/dbeaver.gpg
+echo "deb https://dbeaver.io/debs/dbeaver-ce /" | sudo tee /etc/apt/sources.list.d/dbeaver.list
+sudo apt update && sudo apt install dbeaver-ce
+apt policy dbeaver-ce
+sudo mysql -u root -p
+CREATE DATABASE db_name;
+QUIT;
+
+========etcher iso images===========
+sudo apt install balena-etcher-electron
+
+=======add swithched languages===
+1- add new languages from languages 
+2- add new keyboard layout from keyboard
+
+=====rar extrction=====
+------install unrar------
+sudo apt install unrar
+unrar t file.rar -> to test if it is good to extraction or not 
+unrar l file.rar -> to show all content of it 
+unrar x file.rar -> to extract all in the original directory
+unrar e file.rar -> to extract all contents in the same directory 
+unrar e file.rar -> to extract in a spescfic directory
+-------install to rar----
+sudo apt install rar
+sudo rar a filename.rar filename1
+sudo rar d filename.rar
+sudo rar r filename.rar
+sudo rar a –p filename.rar
+
+===to descripe commands==
+sudo man command 
+
+=====sqlite===
+sudo apt-get install php-sqlite3
+
+====git commands====
+git init 
+git add
+git commit -m "message words"
+git push
+git log --oneline
+git log --oneline --graph
+git log --oneline --abbrev-commit
+git log --pretty=format:"%h - %an, %ar : %s"
+git log --author="Author Name"
+git log --since="yyyy-mm-dd" --until="yyyy-mm-dd"
+git log -n 5
+git checkout -- <filepath>
+git stash save "Stash message"
+git stash list
+git stash show 
+git stash show stash@{0}
+git stash apply
+git stash apply stash@{0}
+git stash pop
+git stash pop stash@{n}
+git stash drop
+git stash drop stash@{n}
+git stash clear
+git stash pop stash@{n}
+git stash branch <branch-name> stash@{n}
+git stash show -p
+
+====sql developer====
+https://www.oracle.com/java/technologies/javase-downloads.html
+https://www.oracle.com/tools/downloads/sqldev-downloads.html
+https://dev.to/ishakantony/how-to-install-oracle-sql-developer-on-ubuntu-20-04-3jpd
+error connection https://stackoverflow.com/questions/24127839/oracle-sql-developer-failure-test-failed-the-network-adapter-could-not-estab
+
+====composer laravel====
+composer create-project laravel/laravel <name of the project>
+
+=====ssh====
+ssh -L 8080:192.168.1.200:80 hamada@192.168.1.100
+ssh username@ip-address
+ssh-keygen
+scp source destination
+sftp username@hostname
+
+Forces ssh to use protocol SSH-1 only.	
+ssh -1 user@host
+Forces ssh to use protocol SSH-2 only.	
+ssh -2 user@host
+Allows IPv4 addresses only.	
+ssh -4 user@host
+Allows IPv6 addresses only.	
+ssh -6 user@host
+Authentication agent connection forwarding is enabled.	
+ssh -A user@host
+Authentication agent connection forwarding is disabled.	
+ssh -a user@host
+Compresses all data (including stdin, stdout, stderr, and data for forwarded X11 and TCP connections) for a faster transfer of data.	
+ssh -C user@host
+Selects the cipher specification for encrypting the session. Specific cipher algorithm will be selected only if both the client and the server support it.	
+ssh -c aes256-cbc user@host
+Requests ssh to go to background just before command execution.	
+ssh -f user@host command
+Allows remote hosts to connect to local forwarded ports.	
+ssh -g -L 8080:localhost:80 user@host
+Prevents reading from stdin.	
+ssh -n user@host command
+Port to connect to on the remote host.	
+ssh -p 2222 user@host
+Suppresses all errors and warnings	
+ssh -q user@host
+Display the version number.	
+ssh -V
+Verbose mode. It echoes everything it is doing while establishing a connection. It is very useful in the debugging of connection failures.	
+ssh -v user@host
+Enables X11 forwarding (GUI Forwarding).	
+ssh -X user@host
+SSh runs at TCP/IP port 22.
+The three major encryption techniques used by SSH are:
+Symmetrical encryption
+Asymmetrical encryption
+Hashing
+sudo systemctl enable ssh 
+sudo systemctl start ssh
+sudo systemctl status ssh
+cat /var/log/auth.log
+grep "Failed password" /var/log/auth.log
+less /var/log/auth.log
+cat /var/log/auth.log | grep "Failed password"
+egrep "Failed|Failure" /var/log/auth.log
+grep "Failed password" /var/log/auth.log | awk '{print $11}' | uniq -c | sort -nr
+cat /etc/pam.d/password-auth
+
+https://www.ssh.com/academy/ssh/command
+
+
+====test network===
+ping google.com
+
+====netplan====
+
+
+=======ubuntu files===
+sudo mv config_soket_server.cofig config_soket_server.json
+sudo chown hamada:hamada -R storage/app/export/shipping
+
+
+===docker===
+-----clean up all----
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
+sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+sudo rm -rf /var/lib/docker
+sudo rm -rf /var/lib/containerd
+------installation----
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo docker run hello-world
+
+====oracle with docker======
+https://datmt.com/backend/how-to-install-oracle-database-on-docker/
+Register an account by going to https://profile.oracle.com/myprofile/account/create-account.jspx
+After that, make sure you accept Oracle’s terms and conditions. Without this step, you will not be able to pull the images.
+docker login  container-registry.oracle.com
+docker pull container-registry.oracle.com/database/enterprise:19.3.0.0
+docker run -dit -p 1521:1521 --name oracle_db container-registry.oracle.com/database/enterprise:19.3.0.0
+sudo docker logs -f oracle_db
+connect sys as sysdba;
+password => Oradoc_db1
+alter session set "_ORACLE_SCRIPT"=true;
+create user db_user identified by db_user_pass;
+GRANT ALL PRIVILEGES TO db_user;
+CONNECT TO THE DATABASE VIA CLIENT 
+ID=> 5648467a41bb17865ca43e3579b6cee8a42a157a883b98cbe1b2e1ef2c282fee
+sudo docker ps
+docker exec -it oracle_db bash -c "source /home/oracle/.bashrc; sqlplus /nolog"
+SELECT name FROM V$DATABASE;
+sudo docker exec -it oracle_db sqlplus hamada/12345678@//localhost:1521/ORCLCDB as sysdba
+
+======vscode=====
+side bar / menu bar / status bar / activity bar
+workspace folder
+ctrl+shift+p => command pallet
+extensions
+open editors
+ctrl+ ~ => open and close active tirminal 
+ctrl+B
+
+======touchpad=====
+sudo add-apt-repository ppa:touchegg/stable
+sudo apt install touchegg
+systemctl status touchegg.service
+systemctl status touchegg.service && systemctl start touchegg.service
+sudo apt install flatpak
+flatpak install https://dl.flathub.org/repo/appstream/com.github.joseexposito.touche.flatpakref
+
+====
+
+====ngrok====
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | \
+  sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
+  echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | \
+  sudo tee /etc/apt/sources.list.d/ngrok.list && \
+  sudo apt update && sudo apt install ngrok
+https://ngrok.com/docs/getting-started/?os=linux  
+
+=====
+====chrome====
+---install--
+sudo apt update -y
+sudo apt install wget -y
+wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -O google.deb
+sudo dpkg -i google.deb
+google-chrome
+sudo apt update && sudo apt upgrade -y
+---remove--
+sudo apt autoremove --purge google-chrome-stable
+
+====apache===
+sudo apt update
+sudo apt install apache2
+sudo ufw app list
+sudo ufw allow 'Apache'
+sudo ufw status
+sudo systemctl status apache2
+hostname -I
+http://192.168.1.8/   => on web 
+sudo systemctl stop apache2
+sudo systemctl start apache2
+sudo systemctl restart apache2
+sudo systemctl reload apache2
+sudo systemctl disable apache2
+sudo systemctl enable apache2
+----setting up virtual hosts----
+sudo mkdir /var/www/your_domain
+sudo chown -R $USER:$USER /var/www/your_domain
+sudo chmod -R 755 /var/www/your_domain
+sudo nano /var/www/your_domain/index.html
+<html>
+    <head>
+        <title>Welcome to Your_domain!</title>
+    </head>
+    <body>
+        <h1>Success!  The your_domain virtual host is working!</h1>
+    </body>
+</html>
+sudo nano /etc/apache2/sites-available/your_domain.conf
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName your_domain
+    ServerAlias www.your_domain
+    DocumentRoot /var/www/your_domain
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+sudo a2ensite your_domain.conf
+sudo apache2ctl configtest
+sudo systemctl restart apache2
+---docs----
+https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04
+---apache modules---
+https://www.digitalocean.com/community/tutorials/how-to-install-configure-and-use-modules-in-the-apache-web-server
+----fpm--
+sudo a2enmod proxy_fcgi setenvif
+sudo systemctl restart apache2 
+sudo a2enconf php8.1-fpm
+sudo systemctl reload apache2
+
+sudo apt install apache2 php php-mbstring php-xml php-gd php-zip php-curl php-dev php-pear php-fpm composer unzip  
+=====curl====
+curl -4 icanhazip.com
+
+=====php====
+sudo apt update
+sudo apt install php8.1
+sudo apt install openssl php-bcmath php-curl php-json php-mbstring php-mysql php-tokenizer php-xml php-zip
+sudo apt install php-dev php-pear build-essential libaio1
+sudo apt install php-fpm 
+
+===oci8===
+sudo ufw allow out 1521/tcp
+sudo systemctl restart ufw
+sudo apt update && sudo apt upgrade
+sudo mkdir /opt/oracle
+cd /opt/oracle/
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-basic-linux.x64-21.6.0.0.0dbru.zip
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-sdk-linux.x64-21.6.0.0.0dbru.zip
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-sqlplus-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-basic-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-sdk-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-sqlplus-linux.x64-21.6.0.0.0dbru.zip
+sudo sh -c "echo /opt/oracle/instantclient_21_6 > /etc/ld.so.conf.d/oracle-instantclient.conf"
+sudo ldconfig
+
+export PATH=/opt/oracle/instantclient_21_6:$PATH
+ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_21_6"
+
+sudo ln -s /opt/oracle/instantclient_21_6/libclntsh.so.21.6 /opt/oracle/instantclient_21_6/libclntsh.so
+sudo ln -s /opt/oracle/instantclient_21_6/libclntshcore.so.21.6 /opt/oracle/instantclient_21_6/libclntshcore.so
+sudo ln -s /opt/oracle/instantclient_21_6/libocci.so.21.6 /opt/oracle/instantclient_21_6/libocci.so
+sudo rm -rf /opt/oracle/*.zip
+sudo apt update
+sudo apt install --no-install-recommends -y libaio-dev
+sudo apt-get install php-dev php-pear build-essential libaio1
+sudo pecl channel-update pecl.php.net
+sudo pecl install oci8
+path to instant client => instantclient,/opt/oracle/instantclient_21_6
+[
+Build process completed successfully
+Installing '/usr/lib/php/20190902/oci8.so'
+install ok: channel://pecl.php.net/oci8-2.2.0
+configuration option "php_ini" is not set to php.ini location
+You should add "extension=oci8.so" to php.ini
+]
+sudo nano /etc/php/8.1/cli/php.ini
+add this => extension=oci8.so
+sudo nano /etc/php/8.1/fpm/php.ini
+add this => extension=oci8.so
+sudo systemctl restart apache2
+cd /etc/php/8.1/mods-available/
+sudo nano oci.ini
+add this => extension=oci8.so
+cd /etc/php/8.1/apache2/conf.d
+sudo ln -s /etc/php/8.1/mods-available/oci.ini 20-oci.ini 
+sudo pecl install oci8
+sudo nano /etc/php/8.1/fpm/pool.d/www.conf
+uncomment this => clear_env = no
+[
+env[LD_LIBRARY_PATH] = /opt/oracle/instantclient_21_6
+env[OCI_HOME] = /opt/oracle/instantclient_21_6
+env[OCI_LIB_DIR] = /opt/oracle/instantclient_21_6
+env[OCI_INCLUDE_DIR] = /opt/oracle/instantclient_21_6/sdk/include
+env[OCI_VERSION] = 21
+]
+sudo systemctl restart apache2
+php -i | grep oci
+
+export PHP_DTRACE=yes
+
+====gnome====
+sudo apt update
+
+=====zsh====
+https://dev.to/leamsigc/set-zsh-as-the-default-shell-in-your-terminal-3o7f
+https://www.todo.how/install-oci8-on-ubuntu-22-04-with-php-8-1-fpm-fastcgi
+https://linuxhint.com/install-visual-studio-code-ubuntu22-04/
+
+===mysql===
+sudo apt update && sudo apt upgrade
+sudo apt install mysql-server
+sudo systemctl start mysql
+sudo systemctl status mysql
+https://freegistutorial.com/how-to-install-mysql-server-on-ubuntu-23-04-lunar-lobster/
+
+===debeaver===
+sudo apt update
+sudo apt -y install default-jdk
+java -version
+curl -fsSL https://dbeaver.io/debs/dbeaver.gpg.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/dbeaver.gpg
+echo "deb https://dbeaver.io/debs/dbeaver-ce /" | sudo tee /etc/apt/sources.list.d/dbeaver.list
+sudo apt update && sudo apt install dbeaver-ce
+apt policy dbeaver-ce
+sudo mysql -u root -p
+CREATE DATABASE db_name;
+QUIT;
+========gnome_tweek===========
+sudo apt update
+sudo add-apt-repository universe
+sudo apt install gnome-tweaks
+gnome-tweaks
+
+
+====chrome====
+---install--
+sudo apt update -y
+sudo apt install wget -y
+wget "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" -O google.deb
+sudo dpkg -i google.deb
+google-chrome
+sudo apt update && sudo apt upgrade -y
+---remove--
+sudo apt autoremove --purge google-chrome-stable
+
+====apache===
+sudo apt update
+sudo apt install apache2
+sudo ufw app list
+sudo ufw allow 'Apache'
+sudo ufw status
+sudo systemctl status apache2
+hostname -I
+http://192.168.1.8/   => on web 
+sudo systemctl stop apache2
+sudo systemctl start apache2
+sudo systemctl restart apache2
+sudo systemctl reload apache2
+sudo systemctl disable apache2
+sudo systemctl enable apache2
+----setting up virtual hosts----
+sudo mkdir /var/www/your_domain
+sudo chown -R $USER:$USER /var/www/your_domain
+sudo chmod -R 755 /var/www/your_domain
+sudo nano /var/www/your_domain/index.html
+<html>
+    <head>
+        <title>Welcome to Your_domain!</title>
+    </head>
+    <body>
+        <h1>Success!  The your_domain virtual host is working!</h1>
+    </body>
+</html>
+sudo nano /etc/apache2/sites-available/your_domain.conf
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName your_domain
+    ServerAlias www.your_domain
+    DocumentRoot /var/www/your_domain
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+sudo a2ensite your_domain.conf
+sudo apache2ctl configtest
+sudo systemctl restart apache2
+---docs----
+https://www.digitalocean.com/community/tutorials/how-to-install-the-apache-web-server-on-ubuntu-22-04
+---apache modules---
+https://www.digitalocean.com/community/tutorials/how-to-install-configure-and-use-modules-in-the-apache-web-server
+----fpm--
+sudo a2enmod proxy_fcgi setenvif
+sudo systemctl restart apache2 
+sudo a2enconf php8.1-fpm
+sudo systemctl reload apache2
+
+sudo apt install apache2 php php-mbstring php-xml php-gd php-zip php-curl php-dev php-pear php-fpm composer unzip  
+=====curl====
+curl -4 icanhazip.com
+
+=====php====
+sudo apt update
+sudo apt install php8.1
+sudo apt install openssl php-bcmath php-curl php-json php-mbstring php-mysql php-tokenizer php-xml php-zip
+sudo apt install php-dev php-pear build-essential libaio1
+sudo apt install php-fpm 
+
+===oci8===
+sudo ufw allow out 1521/tcp
+sudo systemctl restart ufw
+sudo apt update && sudo apt upgrade
+sudo mkdir /opt/oracle
+cd /opt/oracle/
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-basic-linux.x64-21.6.0.0.0dbru.zip
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-sdk-linux.x64-21.6.0.0.0dbru.zip
+sudo wget https://download.oracle.com/otn_software/linux/instantclient/216000/instantclient-sqlplus-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-basic-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-sdk-linux.x64-21.6.0.0.0dbru.zip
+sudo unzip instantclient-sqlplus-linux.x64-21.6.0.0.0dbru.zip
+sudo sh -c "echo /opt/oracle/instantclient_21_6 > /etc/ld.so.conf.d/oracle-instantclient.conf"
+sudo ldconfig
+
+export PATH=/opt/oracle/instantclient_21_6:$PATH
+ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_21_6"
+
+sudo ln -s /opt/oracle/instantclient_21_6/libclntsh.so.21.6 /opt/oracle/instantclient_21_6/libclntsh.so
+sudo ln -s /opt/oracle/instantclient_21_6/libclntshcore.so.21.6 /opt/oracle/instantclient_21_6/libclntshcore.so
+sudo ln -s /opt/oracle/instantclient_21_6/libocci.so.21.6 /opt/oracle/instantclient_21_6/libocci.so
+sudo rm -rf /opt/oracle/*.zip
+sudo apt update
+sudo apt install --no-install-recommends -y libaio-dev
+sudo apt-get install php-dev php-pear build-essential libaio1
+sudo pecl channel-update pecl.php.net
+sudo pecl install oci8
+path to instant client => instantclient,/opt/oracle/instantclient_21_6
+[
+Build process completed successfully
+Installing '/usr/lib/php/20190902/oci8.so'
+install ok: channel://pecl.php.net/oci8-2.2.0
+configuration option "php_ini" is not set to php.ini location
+You should add "extension=oci8.so" to php.ini
+]
+sudo nano /etc/php/8.1/cli/php.ini
+add this => extension=oci8.so
+sudo nano /etc/php/8.1/fpm/php.ini
+add this => extension=oci8.so
+sudo systemctl restart apache2
+cd /etc/php/8.1/mods-available/
+sudo nano oci.ini
+add this => extension=oci8.so
+cd /etc/php/8.1/apache2/conf.d
+sudo ln -s /etc/php/8.1/mods-available/oci.ini 20-oci.ini 
+sudo pecl install oci8
+sudo nano /etc/php/8.1/fpm/pool.d/www.conf
+uncomment this => clear_env = no
+[
+env[LD_LIBRARY_PATH] = /opt/oracle/instantclient_21_6
+env[OCI_HOME] = /opt/oracle/instantclient_21_6
+env[OCI_LIB_DIR] = /opt/oracle/instantclient_21_6
+env[OCI_INCLUDE_DIR] = /opt/oracle/instantclient_21_6/sdk/include
+env[OCI_VERSION] = 21
+]
+sudo systemctl restart apache2
+php -i | grep oci
+
+export PHP_DTRACE=yes
+
+====gnome====
+sudo apt update
+
+=====zsh====
+https://dev.to/leamsigc/set-zsh-as-the-default-shell-in-your-terminal-3o7f
+https://www.todo.how/install-oci8-on-ubuntu-22-04-with-php-8-1-fpm-fastcgi
+https://linuxhint.com/install-visual-studio-code-ubuntu22-04/
+
+===mysql===
+sudo apt update && sudo apt upgrade
+sudo apt install mysql-server
+sudo systemctl start mysql
+sudo systemctl status mysql
+https://freegistutorial.com/how-to-install-mysql-server-on-ubuntu-23-04-lunar-lobster/
+https://www.makeuseof.com/install-configure-mysql-ubuntu/
+https://snapshooter.com/blog/how-to-configure-mysql-for-remote-connection-on-ubuntu-1804
+
+------install------
+  sudo systemctl stop mysql
+  sudo apt clean
+  sudo apt purge mysql*
+  sudo rm -rf /etc/mysql /var/lib/mysql /var/log/mysql
+  sudo apt autoremove
+  sudo rm -rf /etc/mysql /var/lib/mysql /var/log/mysql
+  sudo apt autoclean
+  sudo apt update
+  sudo apt dist-upgrade
+  sudo apt install -f
+  sudo apt install mysql-server
+-------
+  mysql_secure_installation
+  
+  sudo dpkg -l | grep mysql
+  sudo systemctl disable mysql
+  sudo systemctl enable mysql
+
+  sudo apt-get remove --purge mysql*
+  sudo apt-get purge mysql*
+  sudo apt-get autoremove
+  sudo apt-get autoclean
+  sudo apt-get remove dbconfig-mysql
+  sudo apt-get dist-upgrade
+  rm -rf /var/lib/mysql/
+  rm -rf /etc/my.cnf
+  sudo apt install mysql-server
+  sudo service mysql status
+  sudo journalctl -u mysql
+  sudo service mysql restart
+  sudo ss -tap | grep mysql
+  sudo apt install mysql-client -y
+  sudo systemctl enable mysql
+
+ @@ to show table of @@ to solve password error ==> @@@ https://ostechnix.com/fix-mysql-error-1819-hy000-your-password-does-not-satisfy-the-current-policy-requirements/   @@@
++--------------------------------------+--------+
+| Variable_name                        | Value  |
++--------------------------------------+--------+
+| validate_password.check_user_name    | ON     |
+| validate_password.dictionary_file    |        |
+| validate_password.length             | 8      |
+| validate_password.mixed_case_count   | 1      |
+| validate_password.number_count       | 1      |
+| validate_password.policy             | MEDIUM |
+| validate_password.special_char_count | 1      |
++--------------------------------------+--------+
+7 rows in set (0.01 sec)
+
+
+use ->
+
+% SHOW VARIABLES LIKE 'validate_password%'
+
+#to create new user just use 
+
+% create user 'username'@'localhost' identified by 'Password123#@!';
+
+# to kill all mysql ->  % sudo killall -9 mysql_secure_installation
+
+
+ # create batabase 
+
+% CREATE DATABASE db_name;
+
+#to select database just write 
+@%  use database_name
+
+# to log in into mysql 
+@%  mysql --user=root --password=7amada@124H
+
+#to install dbeaver-ce 
+@@@ https://dbeaver.io/download/?start&os=linux&arch=x86_64&dist=deb   @@@
+
+mysql -u hamada -p -D mekkawy < ../admin_mekawy_2023-10-22_21-41-55.sql
+
+===debeaver===
+sudo apt update
+sudo apt -y install default-jdk
+java -version
+curl -fsSL https://dbeaver.io/debs/dbeaver.gpg.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/dbeaver.gpg
+echo "deb https://dbeaver.io/debs/dbeaver-ce /" | sudo tee /etc/apt/sources.list.d/dbeaver.list
+sudo apt update && sudo apt install dbeaver-ce
+apt policy dbeaver-ce
+sudo mysql -u root -p
+CREATE DATABASE db_name;
+QUIT;
+
+========etcher iso images===========
+sudo apt install balena-etcher-electron
+
+=======add swithched languages===
+1- add new languages from languages 
+2- add new keyboard layout from keyboard
+
+=====rar extrction=====
+------install unrar------
+sudo apt install unrar
+unrar t file.rar -> to test if it is good to extraction or not 
+unrar l file.rar -> to show all content of it 
+unrar x file.rar -> to extract all in the original directory
+unrar e file.rar -> to extract all contents in the same directory 
+unrar e file.rar -> to extract in a spescfic directory
+-------install to rar----
+sudo apt install rar
+sudo rar a filename.rar filename1
+sudo rar d filename.rar
+sudo rar r filename.rar
+sudo rar a –p filename.rar
+
+===to descripe commands==
+sudo man command 
+
+=====sqlite===
+sudo apt-get install php-sqlite3
+
+====git commands====
+git init 
+git add
+git commit -m "message words"
+git push
+git log --oneline
+git log --oneline --graph
+git log --oneline --abbrev-commit
+git log --pretty=format:"%h - %an, %ar : %s"
+git log --author="Author Name"
+git log --since="yyyy-mm-dd" --until="yyyy-mm-dd"
+git log -n 5
+git checkout -- <filepath>
+git stash save "Stash message"
+git stash list
+git stash show 
+git stash show stash@{0}
+git stash apply
+git stash apply stash@{0}
+git stash pop
+git stash pop stash@{n}
+git stash drop
+git stash drop stash@{n}
+git stash clear
+git stash pop stash@{n}
+git stash branch <branch-name> stash@{n}
+git stash show -p
+
+====sql developer====
+https://www.oracle.com/java/technologies/javase-downloads.html
+https://www.oracle.com/tools/downloads/sqldev-downloads.html
+https://dev.to/ishakantony/how-to-install-oracle-sql-developer-on-ubuntu-20-04-3jpd
+error connection https://stackoverflow.com/questions/24127839/oracle-sql-developer-failure-test-failed-the-network-adapter-could-not-estab
+
+====composer laravel====
+composer create-project laravel/laravel <name of the project>
+
+=====ssh====
+ssh -L 8080:192.168.1.200:80 hamada@192.168.1.100
+ssh username@ip-address
+ssh-keygen
+scp source destination
+sftp username@hostname
+
+Forces ssh to use protocol SSH-1 only.	
+ssh -1 user@host
+Forces ssh to use protocol SSH-2 only.	
+ssh -2 user@host
+Allows IPv4 addresses only.	
+ssh -4 user@host
+Allows IPv6 addresses only.	
+ssh -6 user@host
+Authentication agent connection forwarding is enabled.	
+ssh -A user@host
+Authentication agent connection forwarding is disabled.	
+ssh -a user@host
+Compresses all data (including stdin, stdout, stderr, and data for forwarded X11 and TCP connections) for a faster transfer of data.	
+ssh -C user@host
+Selects the cipher specification for encrypting the session. Specific cipher algorithm will be selected only if both the client and the server support it.	
+ssh -c aes256-cbc user@host
+Requests ssh to go to background just before command execution.	
+ssh -f user@host command
+Allows remote hosts to connect to local forwarded ports.	
+ssh -g -L 8080:localhost:80 user@host
+Prevents reading from stdin.	
+ssh -n user@host command
+Port to connect to on the remote host.	
+ssh -p 2222 user@host
+Suppresses all errors and warnings	
+ssh -q user@host
+Display the version number.	
+ssh -V
+Verbose mode. It echoes everything it is doing while establishing a connection. It is very useful in the debugging of connection failures.	
+ssh -v user@host
+Enables X11 forwarding (GUI Forwarding).	
+ssh -X user@host
+SSh runs at TCP/IP port 22.
+The three major encryption techniques used by SSH are:
+Symmetrical encryption
+Asymmetrical encryption
+Hashing
+sudo systemctl enable ssh 
+sudo systemctl start ssh
+sudo systemctl status ssh
+cat /var/log/auth.log
+grep "Failed password" /var/log/auth.log
+less /var/log/auth.log
+cat /var/log/auth.log | grep "Failed password"
+egrep "Failed|Failure" /var/log/auth.log
+grep "Failed password" /var/log/auth.log | awk '{print $11}' | uniq -c | sort -nr
+cat /etc/pam.d/password-auth
+
+https://www.ssh.com/academy/ssh/command
+
+
+====test network===
+ping google.com
+
+====netplan====
+
+
+=======ubuntu files===
+sudo mv config_soket_server.cofig config_soket_server.json
+sudo chown hamada:hamada -R storage/app/export/shipping
+
+
+===docker===
+-----clean up all----
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
+sudo apt-get purge docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+sudo rm -rf /var/lib/docker
+sudo rm -rf /var/lib/containerd
+------installation----
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo docker run hello-world
+
+====oracle with docker======
+https://datmt.com/backend/how-to-install-oracle-database-on-docker/
+Register an account by going to https://profile.oracle.com/myprofile/account/create-account.jspx
+After that, make sure you accept Oracle’s terms and conditions. Without this step, you will not be able to pull the images.
+docker login  container-registry.oracle.com
+docker pull container-registry.oracle.com/database/enterprise:19.3.0.0
+docker run -dit -p 1521:1521 --name oracle_db container-registry.oracle.com/database/enterprise:19.3.0.0
+sudo docker logs -f oracle_db
+connect sys as sysdba;
+password => Oradoc_db1
+alter session set "_ORACLE_SCRIPT"=true;
+create user db_user identified by db_user_pass;
+GRANT ALL PRIVILEGES TO db_user;
+CONNECT TO THE DATABASE VIA CLIENT 
+ID=> 5648467a41bb17865ca43e3579b6cee8a42a157a883b98cbe1b2e1ef2c282fee
+sudo docker ps
+docker exec -it oracle_db bash -c "source /home/oracle/.bashrc; sqlplus /nolog"
+SELECT name FROM V$DATABASE;
+sudo docker exec -it oracle_db sqlplus hamada/12345678@//localhost:1521/ORCLCDB as sysdba
+
+======vscode=====
+side bar / menu bar / status bar / activity bar
+workspace folder
+ctrl+shift+p => command pallet
+extensions
+open editors
+ctrl+ ~ => open and close active tirminal 
+ctrl+B
+
+======touchpad=====
+sudo add-apt-repository ppa:touchegg/stable
+sudo apt install touchegg
+systemctl status touchegg.service
+systemctl status touchegg.service && systemctl start touchegg.service
+sudo apt install flatpak
+flatpak install https://dl.flathub.org/repo/appstream/com.github.joseexposito.touche.flatpakref
+
+====
+
+
+
+
+
+
+
